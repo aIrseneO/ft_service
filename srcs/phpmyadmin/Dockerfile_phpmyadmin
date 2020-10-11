@@ -1,0 +1,9 @@
+FROM myalpine
+
+COPY srcs/ ./root/
+
+WORKDIR /root/
+
+ENTRYPOINT ["/bin/sh"]
+
+CMD ["launch_phpmyadmin.sh"]

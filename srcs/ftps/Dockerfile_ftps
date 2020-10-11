@@ -1,0 +1,15 @@
+FROM alpine
+
+RUN apk add --update vsftpd openssl --no-cache
+
+COPY srcs/ ./root/
+
+WORKDIR /root/
+
+EXPOSE 21
+
+VOLUME /home/ftps_user
+
+ENTRYPOINT ["/bin/sh"]
+
+CMD ["launch_ftps.sh"]
