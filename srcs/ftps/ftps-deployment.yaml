@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ftps-deployment
+  labels:
+    app: ft_service
+    tier: front-end
+    name: ftps-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ft_service
+      tier: front-end
+      name: ftps-pod
+  template:
+    metadata:
+      name: ftps-pod
+      labels:
+        app: ft_service
+        tier: front-end
+        name: ftps-pod
+    spec:
+      volumes:
+      - name: certifications
+        hostPath:
+          path: /certs
+      - name: home
+        hostPath:
+          path: /mnt/ftps/home
+      containers:
+      - name: ftps
+        image: ftps_image
+        ports:
+        - containerPort: 21
+        volumeMounts:
+        - name: certifications
+          mountPath: /certs
+        - name: home
+          mountPath: /home/USER
+        imagePullPolicy: Never

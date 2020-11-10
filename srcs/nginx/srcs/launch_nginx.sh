@@ -7,21 +7,7 @@
 #mkdir /www
 #chown -R www:www /www
 #
-# Create a configuration file based on the given sample
-#cp phpmyadmin/config.sample.inc.php phpmyadmin/config.inc.php
-#
-# Change the ownership of phpmyadmin directory
-#chown -R www:www phpmyadmin
-#
-# Give full permissions of the confi.inc.php to the user www
-#chmod 700 phpmyadmin/config.inc.php
-#
-# Edit the configuration file with sed app
-#sed -i "s/blowfish_secret'] = ''/blowfish_secret'] = 'mysecretpassword'/1" \
-#			phpmyadmin/config.inc.php
-#
-# Move phpmyadmin files to the directory of web files
-#mv -f phpmyadmin /www
+# Move web files to the web directory
 #mv info.php /www
 #
 # Give ownership of nginx's file to the user
@@ -40,7 +26,7 @@
 #sh ssl_key_crt_gen.sh nginx
 #
 # Check if the configuration is correct
-#nginx -t
+##nginx -t
 #
 # Modify PHP config files www.conf and php.ini
 #sed -i "s|;listen.owner\s*=\s*nobody|listen.owner = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/www.conf
@@ -60,10 +46,15 @@
 #sed -i "s|;*cgi.fix_pathinfo=.*|cgi.fix_pathinfo= ${PHP_CGI_FIX_PATHINFO}|i" /etc/php7/php.ini
 #
 # Set the global directive for the process identifier (PID)
+#mkdir -p /run/nginx
+#mkdir -p /run/php
+#
+# Start ssh server
+/usr/sbin/sshd
+#
+# Reload Nginx server and start PHP
 nginx -g "pid /run/nginx/nginx.pid;"
 php-fpm7 --pid /run/php/php.pid
-#
-# Reload Nginx server to include new changes
 nginx -s reload
 #
 # Check if nginx and php are up running
@@ -77,4 +68,3 @@ tail -f /var/log/nginx/access.log /var/log/nginx/error.log
 #https://wiki.alpinelinux.org/wiki/Nginx
 #https://www.nginx.com/resources/wiki/start/topics/tutorials/commandline/
 #https://wiki.alpinelinux.org/wiki/Nginx_with_PHP#Configuration_of_PHP7
-#https://wiki.alpinelinux.org/wiki/PhpMyAdmin

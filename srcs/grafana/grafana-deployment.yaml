@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-deployment
+  labels:
+    app: ft_service
+    tier: front-end
+    name: grafana-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ft_service
+      tier: front-end
+      name: grafana-pod
+  template:
+    metadata:
+      name: grafana-pod
+      labels:
+        app: ft_service
+        tier: front-end
+        name: grafana-pod
+    spec:
+      volumes:
+      - name: certifications
+        hostPath:
+          path: /certs
+      containers:
+      - name: grafana
+        image: grafana_image
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: certifications
+          mountPath: /certs
+        imagePullPolicy: Never

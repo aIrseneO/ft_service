@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: ft_service
+    tier: front-end
+    name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ft_service
+      tier: front-end
+      name: nginx-pod
+  template:
+    metadata:
+      name: nginx-pod
+      labels:
+        app: ft_service
+        tier: front-end
+        name: nginx-pod
+    spec:
+      volumes:
+      - name: certifications
+        hostPath:
+          path: /certs
+      containers:
+      - name: nginx
+        image: nginx_image
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        - containerPort: 22
+        volumeMounts:
+        - name: certifications
+          mountPath: /certs
+        imagePullPolicy: Never

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-deployment
+  labels:
+    app: ft_service
+    tier: front-end
+    name: wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ft_service
+      tier: front-end
+      name: wordpress
+  template:
+    metadata:
+      name: wordpress-pod
+      labels:
+        app: ft_service
+        tier: front-end
+        name: wordpress
+    spec:
+      volumes:
+      - name: certifications
+        hostPath:
+          path: /certs
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: wordpress-pv-claim
+      containers:
+      - name: wordpress
+        image: wordpress_image
+        ports:
+        - name: https
+          containerPort: 5050
+        volumeMounts:
+        - name: certifications
+          mountPath: /certs
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/wordpress
+        imagePullPolicy: Never

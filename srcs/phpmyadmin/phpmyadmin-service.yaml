@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin-service
+  labels:
+    app: ft_service
+    tier: front-end
+    name: phpmyadmin-service
+  annotations:
+    metallb.universe.tf/allow-shared-ip: MySharingKey
+spec:
+  type: LoadBalancer
+  loadBalancerIP: MyClusterIP
+  ports:
+  - name: https
+    protocol: TCP
+    targetPort: 5000
+    port: 5000
+  selector:
+    app: ft_service
+    tier: front-end
+    name: phpmyadmin-pod

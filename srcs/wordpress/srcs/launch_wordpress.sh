@@ -1,31 +1,34 @@
 #! /bin/sh/
 #
-# Creating new user and group 'www' for nginx
-#adduser -D -g 'www' -h /home/www/ www
+# Creating new user and group '$USER' for nginx
+#adduser -D -g '$USER' -h /home/$USER/ $USER
 #
 # Create a directory for web files
-#mkdir /www
-#chown -R www:www /www
+#mkdir /$USER
+#chown -R $USER:$USER /$USER
 #
 # Create a configuration file based on the given sample
-#cp phpmyadmin/config.sample.inc.php phpmyadmin/config.inc.php
+#cp wordpress/wp-config-sample.php wordpress/wp-config.php
 #
-# Change the ownership of phpmyadmin directory
-#chown -R www:www phpmyadmin
+# Change the ownership of the wordpress directory
+#chown -R $USER:$USER wordpress
 #
-# Give full permissions of the confi.inc.php to the user www
-#chmod 700 phpmyadmin/config.inc.php
+# Give full permissions of the file wp-config.php to the user $USER
+#chmod 700 wordpress/wp-config.php
 #
-# Edit the configuration file with sed app
-#sed -i "s/blowfish_secret'] = ''/blowfish_secret'] = 'mysecretpassword'/1" \
-#			phpmyadmin/config.inc.php
+# Edit the config file using sed app
+#	Set the name of the database for WordPress
+#sed -i "s/database_name_here/$DATABASE/" /$USER/wordpress/wp-config.php
+#	Set MySQL database username
+#sed -i "s/username_here/$DB_USER/" /$USER/wordpress/wp-config.php
+#	Set MySQL database password
+#sed -i "s/password_here/$DB_PASSWORD/" /$USER/wordpress/wp-config.php
 #
-# Move phpmyadmin files to the directory of web files
-#mv -f phpmyadmin /www
-#mv info.php /www
+# Move WordPress to the directory of web files
+#mv -f wordpress /$USER
 #
 # Give ownership of nginx's file to the user
-#chown -R www:www /var/lib/nginx
+#chown -R $USER:$USER /var/lib/nginx
 #
 # Make backup of the original nginx.conf file
 #mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.orig
@@ -42,13 +45,13 @@
 # Check if the configuration is correct
 #nginx -t
 #
-# Modify PHP config files www.conf and php.ini
-#sed -i "s|;listen.owner\s*=\s*nobody|listen.owner = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/www.conf
-#sed -i "s|;listen.group\s*=\s*nobody|listen.group = ${PHP_FPM_GROUP}|g" /etc/php7/php-fpm.d/www.conf
-#sed -i "s|;listen.mode\s*=\s*0660|listen.mode = ${PHP_FPM_LISTEN_MODE}|g" /etc/php7/php-fpm.d/www.conf
-#sed -i "s|user\s*=\s*nobody|user = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/www.conf
-#sed -i "s|group\s*=\s*nobody|group = ${PHP_FPM_GROUP}|g" /etc/php7/php-fpm.d/www.conf
-#sed -i "s|;log_level\s*=\s*notice|log_level = notice|g" /etc/php7/php-fpm.d/www.conf
+# Modify PHP config files $USER.conf and php.ini
+#sed -i "s|;listen.owner\s*=\s*nobody|listen.owner = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/$USER.conf
+#sed -i "s|;listen.group\s*=\s*nobody|listen.group = ${PHP_FPM_GROUP}|g" /etc/php7/php-fpm.d/$USER.conf
+#sed -i "s|;listen.mode\s*=\s*0660|listen.mode = ${PHP_FPM_LISTEN_MODE}|g" /etc/php7/php-fpm.d/$USER.conf
+#sed -i "s|user\s*=\s*nobody|user = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/$USER.conf
+#sed -i "s|group\s*=\s*nobody|group = ${PHP_FPM_GROUP}|g" /etc/php7/php-fpm.d/$USER.conf
+#sed -i "s|;log_level\s*=\s*notice|log_level = notice|g" /etc/php7/php-fpm.d/$USER.conf
 #
 #sed -i "s|display_errors\s*=\s*Off|display_errors = ${PHP_DISPLAY_ERRORS}|i" /etc/php7/php.ini
 #sed -i "s|display_startup_errors\s*=\s*Off|display_startup_errors = ${PHP_DISPLAY_STARTUP_ERRORS}|i" /etc/php7/php.ini
@@ -59,6 +62,10 @@
 #sed -i "s|;*post_max_size =.*|post_max_size = ${PHP_MAX_POST}|i" /etc/php7/php.ini
 #sed -i "s|;*cgi.fix_pathinfo=.*|cgi.fix_pathinfo= ${PHP_CGI_FIX_PATHINFO}|i" /etc/php7/php.ini
 #
+if [ -d "/www/wordpress" ]; then
+	mv -f /www/wordpress/* /var/www/wordpress
+	rm -rf /www
+fi
 # Set the global directive for the process identifier (PID)
 nginx -g "pid /run/nginx/nginx.pid;"
 php-fpm7 --pid /run/php/php.pid
@@ -77,4 +84,4 @@ tail -f /var/log/nginx/access.log /var/log/nginx/error.log
 #https://wiki.alpinelinux.org/wiki/Nginx
 #https://www.nginx.com/resources/wiki/start/topics/tutorials/commandline/
 #https://wiki.alpinelinux.org/wiki/Nginx_with_PHP#Configuration_of_PHP7
-#https://wiki.alpinelinux.org/wiki/PhpMyAdmin
+#https://wiki.alpinelinux.org/wiki/WordPress
