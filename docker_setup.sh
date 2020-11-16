@@ -81,3 +81,5 @@ echo	Run Grafana container...................................................
 docker run -d --restart unless-stopped --name grafana -p 3000:3000/tcp \
 		-p 3000:3000/udp -v $PWD/srcs/certs:/certs \
 		-v $PWD/data/grafana:/var/lib/grafana grafana_image
+#
+# TODO: establish connection between pods
