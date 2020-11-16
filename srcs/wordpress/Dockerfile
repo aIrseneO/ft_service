@@ -1,12 +1,14 @@
 FROM myalpine
 
-ARG USER=www
+ARG USER
+ARG PASS
+ARG HOST1
+ARG HOST2
 ARG DATABASE
-ARG DB_USER
-ARG DB_PASSWORD
+ARG USR=www
 ARG HOSTNAME
 
-ENV PHP_FPM_USER="$USER" PHP_FPM_GROUP="$USER" \
+ENV PHP_FPM_USER="$USR" PHP_FPM_GROUP="$USR" \
 	PHP_FPM_LISTEN_MODE="0660" PHP_MEMORY_LIMIT="512M" \
 	PHP_MAX_UPLOAD="50M" PHP_MAX_FILE_UPLOAD="200" \
 	PHP_MAX_POST="100M" PHP_DISPLAY_ERRORS="On" \
@@ -16,26 +18,31 @@ ENV PHP_FPM_USER="$USER" PHP_FPM_GROUP="$USER" \
 COPY srcs/nginx.conf /etc/nginx/nginx.conf
 COPY srcs/localhost.conf /etc/nginx/conf.d/localhost.conf
 COPY srcs/launch_wordpress.sh /launch_wordpress.sh
+COPY srcs/telegraf.conf /etc/telegraf.conf
 
-RUN adduser -D -g '$USER' -h /home/$USER/ $USER && mkdir /$USER && \
-	chown -R $USER:$USER /$USER && chown -R $USER:$USER /var/lib/nginx && \
+RUN adduser -D -g '$USR' -h /home/$USR/ $USR && mkdir /$USR && \
+	chown -R $USR:$USR /$USR && chown -R $USR:$USR /var/lib/nginx && \
 	mkdir -p /run/nginx && mkdir -p /run/php
 
-RUN wget http://wordpress.org/latest.tar.gz -O /$USER/wp.tar.gz \
-	&& tar xfz /$USER/wp.tar.gz -C /$USER && rm -f /$USER/wp.tar.gz && \
-	cp /$USER/wordpress/wp-config-sample.php /$USER/wordpress/wp-config.php \
-	&& sed -i "s/database_name_here/$DATABASE/" /$USER/wordpress/wp-config.php \
-	&& sed -i "s/username_here/$DB_USER/" /$USER/wordpress/wp-config.php \
-	&& sed -i "s/password_here/$DB_PASSWORD/" /$USER/wordpress/wp-config.php \
-	&& sed -i "s/localhost/$HOSTNAME/" /$USER/wordpress/wp-config.php \
-	&& chown -R $USER:$USER /$USER/wordpress && chmod 700 /$USER/wordpress/wp-config.php
+RUN wget http://wordpress.org/latest.tar.gz -O /$USR/wp.tar.gz \
+	&& tar xfz /$USR/wp.tar.gz -C /$USR && rm -f /$USR/wp.tar.gz && \
+	cp /$USR/wordpress/wp-config-sample.php /$USR/wordpress/wp-config.php \
+	&& sed -i "s/database_name_here/$DATABASE/" /$USR/wordpress/wp-config.php \
+	&& sed -i "s/username_here/$USER/" /$USR/wordpress/wp-config.php \
+	&& sed -i "s/password_here/$PASS/" /$USR/wordpress/wp-config.php \
+	&& sed -i "s/localhost/$HOST1/" /$USR/wordpress/wp-config.php \
+	&& chown -R $USR:$USR /$USR/wordpress && chmod 700 /$USR/wordpress/wp-config.php \
+	&& sed -i "s/__USER__/$USER/" /etc/telegraf.conf \
+	&& sed -i "s/__PASS__/$PASS/" /etc/telegraf.conf \
+	&& sed -i "s/__HOST__/$HOST2/" /etc/telegraf.conf
 
-RUN sed -i "s|;listen.owner\s*=\s*nobody|listen.owner = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/$USER.conf && \
-	sed -i "s|;listen.group\s*=\s*nobody|listen.group = ${PHP_FPM_GROUP}|g" /etc/php7/php-fpm.d/$USER.conf && \
-	sed -i "s|;listen.mode\s*=\s*0660|listen.mode = ${PHP_FPM_LISTEN_MODE}|g" /etc/php7/php-fpm.d/$USER.conf && \
-	sed -i "s|user\s*=\s*nobody|user = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/$USER.conf && \
-	sed -i "s|group\s*=\s*nobody|group = ${PHP_FPM_GROUP}|g" /etc/php7/php-fpm.d/$USER.conf && \
-	sed -i "s|;log_level\s*=\s*notice|log_level = notice|g" /etc/php7/php-fpm.d/$USER.conf && \
+
+RUN sed -i "s|;listen.owner\s*=\s*nobody|listen.owner = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/$USR.conf && \
+	sed -i "s|;listen.group\s*=\s*nobody|listen.group = ${PHP_FPM_GROUP}|g" /etc/php7/php-fpm.d/$USR.conf && \
+	sed -i "s|;listen.mode\s*=\s*0660|listen.mode = ${PHP_FPM_LISTEN_MODE}|g" /etc/php7/php-fpm.d/$USR.conf && \
+	sed -i "s|user\s*=\s*nobody|user = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/$USR.conf && \
+	sed -i "s|group\s*=\s*nobody|group = ${PHP_FPM_GROUP}|g" /etc/php7/php-fpm.d/$USR.conf && \
+	sed -i "s|;log_level\s*=\s*notice|log_level = notice|g" /etc/php7/php-fpm.d/$USR.conf && \
 	sed -i "s|display_errors\s*=\s*Off|display_errors = ${PHP_DISPLAY_ERRORS}|i" /etc/php7/php.ini && \
 	sed -i "s|display_startup_errors\s*=\s*Off|display_startup_errors = ${PHP_DISPLAY_STARTUP_ERRORS}|i" /etc/php7/php.ini && \
 	sed -i "s|error_reporting\s*=\s*E_ALL & ~E_DEPRECATED & ~E_STRICT|error_reporting = ${PHP_ERROR_REPORTING}|i" /etc/php7/php.ini && \

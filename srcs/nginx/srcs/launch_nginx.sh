@@ -57,6 +57,8 @@ nginx -g "pid /run/nginx/nginx.pid;"
 php-fpm7 --pid /run/php/php.pid
 nginx -s reload
 #
+# Start Telegraf
+telegraf --config /etc/telegraf.conf &
 # Check if nginx and php are up running
 #ps aux | grep nginx
 #ps aux | grep php

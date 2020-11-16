@@ -77,6 +77,9 @@ nginx -s reload
 #ps aux | grep nginx
 #ps aux | grep php
 #
+# Start Telegraf
+telegraf --config /etc/telegraf.conf &
+#
 # Display latest accesses logging and errors logging to ease administration
 tail -f /var/log/nginx/access.log /var/log/nginx/error.log
 #

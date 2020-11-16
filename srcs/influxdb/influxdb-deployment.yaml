@@ -22,15 +22,15 @@ spec:
         name: influxdb
     spec:
       volumes:
-      - name: influx-db
-        hostPath:
-          path: /mnt/influxdb/app
+      - name: influxdb-persistent-storage
+        persistentVolumeClaim:
+          claimName: influxdb-pv-claim
       containers:
       - name: influxdb
         image: influxdb_image
         ports:
         - containerPort: 8086
         volumeMounts:
-        - name: influx-db
+        - name: influxdb-persistent-storage
           mountPath: /var/lib/influxdb
         imagePullPolicy: Never

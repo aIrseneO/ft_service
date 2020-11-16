@@ -5,7 +5,7 @@ metadata:
   labels:
     app: ft_service
     tier: front-end
-    name: nginx
+    name: nginx-service
   annotations:
     metallb.universe.tf/allow-shared-ip: MySharingKey
 spec:
@@ -27,4 +27,4 @@ spec:
   selector:
     app: ft_service
     tier: front-end
-    name: nginx
+    name: nginx-pod

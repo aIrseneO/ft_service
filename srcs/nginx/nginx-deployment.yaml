@@ -29,9 +29,12 @@ spec:
       - name: nginx
         image: nginx_image
         ports:
-        - containerPort: 80
-        - containerPort: 443
-        - containerPort: 22
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+        - name: ssh
+          containerPort: 22
         volumeMounts:
         - name: certifications
           mountPath: /certs

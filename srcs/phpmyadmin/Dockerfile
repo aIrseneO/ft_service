@@ -1,9 +1,12 @@
 FROM myalpine
 
-ARG USER=www
-ARG HOSTNAME
+ARG USER
+ARG PASS
+ARG HOST1
+ARG HOST2
+ARG USR=www
 
-ENV PHP_FPM_USER="$USER" PHP_FPM_GROUP="$USER" \
+ENV PHP_FPM_USER="$USR" PHP_FPM_GROUP="$USR" \
 	PHP_FPM_LISTEN_MODE="0660" PHP_MEMORY_LIMIT="512M" \
 	PHP_MAX_UPLOAD="50M" PHP_MAX_FILE_UPLOAD="200" \
 	PHP_MAX_POST="100M" PHP_DISPLAY_ERRORS="On" \
@@ -13,26 +16,30 @@ ENV PHP_FPM_USER="$USER" PHP_FPM_GROUP="$USER" \
 COPY srcs/nginx.conf /etc/nginx/nginx.conf
 COPY srcs/localhost.conf /etc/nginx/conf.d/localhost.conf
 COPY srcs/launch_phpmyadmin.sh /launch_phpmyadmin.sh
+COPY srcs/telegraf.conf /etc/telegraf.conf
 
-RUN adduser -D -g '$USER' -h /home/$USER/ $USER && mkdir /$USER && \
-	chown -R $USER:$USER /$USER && chown -R $USER:$USER /var/lib/nginx && \
-	mkdir -p /run/nginx && mkdir -p /run/php
+RUN adduser -D -g '$USR' -h /home/$USR/ $USR && mkdir /$USR && \
+	chown -R $USR:$USR /$USR && chown -R $USR:$USR /var/lib/nginx && \
+	mkdir -p /run/nginx && mkdir -p /run/php && \
+	sed -i "s/__USER__/$USER/" /etc/telegraf.conf && \
+	sed -i "s/__PASS__/$PASS/" /etc/telegraf.conf && \
+	sed -i "s/__HOST__/$HOST2/" /etc/telegraf.conf
 
 RUN wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-english.tar.gz \
-	&& tar xfz phpMyAdmin-latest-english.tar.gz -C /$USER && \
-	rm phpMyAdmin-latest-english.tar.gz && mv -f /$USER/phpMyAd* /$USER/phpmyadmin \
-	&& cp /$USER/phpmyadmin/config.sample.inc.php /$USER/phpmyadmin/config.inc.php \
-	&& chown -R $USER:$USER /$USER/phpmyadmin && chmod 700 /$USER/phpmyadmin/config.inc.php \
-	&& sed -i "s/blowfish_secret'] = ''/blowfish_secret'] = 'mysecretpassword'/1" /$USER/phpmyadmin/config.inc.php \
-	&& sed -i "s/localhost/$HOSTNAME/1" /$USER/phpmyadmin/config.inc.php \
-	&& mv -f /$USER/phpmyadmin /var/www && rm -rf /$USER
+	&& tar xfz phpMyAdmin-latest-english.tar.gz -C /$USR && \
+	rm phpMyAdmin-latest-english.tar.gz && mv -f /$USR/phpMyAd* /$USR/phpmyadmin \
+	&& cp /$USR/phpmyadmin/config.sample.inc.php /$USR/phpmyadmin/config.inc.php \
+	&& chown -R $USR:$USR /$USR/phpmyadmin && chmod 700 /$USR/phpmyadmin/config.inc.php \
+	&& sed -i "s/blowfish_secret'] = ''/blowfish_secret'] = 'mysecretpassword'/1" /$USR/phpmyadmin/config.inc.php \
+	&& sed -i "s/localhost/$HOST1/1" /$USR/phpmyadmin/config.inc.php \
+	&& mv -f /$USR/phpmyadmin /var/www && rm -rf /$USR
 
-RUN sed -i "s|;listen.owner\s*=\s*nobody|listen.owner = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/$USER.conf && \
-	sed -i "s|;listen.group\s*=\s*nobody|listen.group = ${PHP_FPM_GROUP}|g" /etc/php7/php-fpm.d/$USER.conf && \
-	sed -i "s|;listen.mode\s*=\s*0660|listen.mode = ${PHP_FPM_LISTEN_MODE}|g" /etc/php7/php-fpm.d/$USER.conf && \
-	sed -i "s|user\s*=\s*nobody|user = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/$USER.conf && \
-	sed -i "s|group\s*=\s*nobody|group = ${PHP_FPM_GROUP}|g" /etc/php7/php-fpm.d/$USER.conf && \
-	sed -i "s|;log_level\s*=\s*notice|log_level = notice|g" /etc/php7/php-fpm.d/$USER.conf && \
+RUN sed -i "s|;listen.owner\s*=\s*nobody|listen.owner = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/$USR.conf && \
+	sed -i "s|;listen.group\s*=\s*nobody|listen.group = ${PHP_FPM_GROUP}|g" /etc/php7/php-fpm.d/$USR.conf && \
+	sed -i "s|;listen.mode\s*=\s*0660|listen.mode = ${PHP_FPM_LISTEN_MODE}|g" /etc/php7/php-fpm.d/$USR.conf && \
+	sed -i "s|user\s*=\s*nobody|user = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/$USR.conf && \
+	sed -i "s|group\s*=\s*nobody|group = ${PHP_FPM_GROUP}|g" /etc/php7/php-fpm.d/$USR.conf && \
+	sed -i "s|;log_level\s*=\s*notice|log_level = notice|g" /etc/php7/php-fpm.d/$USR.conf && \
 	sed -i "s|display_errors\s*=\s*Off|display_errors = ${PHP_DISPLAY_ERRORS}|i" /etc/php7/php.ini && \
 	sed -i "s|display_startup_errors\s*=\s*Off|display_startup_errors = ${PHP_DISPLAY_STARTUP_ERRORS}|i" /etc/php7/php.ini && \
 	sed -i "s|error_reporting\s*=\s*E_ALL & ~E_DEPRECATED & ~E_STRICT|error_reporting = ${PHP_ERROR_REPORTING}|i" /etc/php7/php.ini && \

@@ -18,20 +18,20 @@ CREATE DATABASE ${DATABASE};
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '${ROOT_PASSWORD}' WITH GRANT OPTION;
 CREATE USER '${ADMIN}'@'%' IDENTIFIED BY '${ADMIN_PW}';
 GRANT ALL PRIVILEGES ON *.* TO '${ADMIN}'@'%' WITH GRANT OPTION;
-CREATE USER '${INSERTOR}'@'${HOST}' IDENTIFIED BY '${INSERTOR_PW}';
-GRANT INSERT ON ${DATABASE}.* TO '${INSERTOR}'@'${HOST}';
-CREATE USER '${DELETOR}'@'${HOST}' IDENTIFIED BY '${DELETOR_PW}';
-GRANT DELETE ON ${DATABASE}.* TO '${DELETOR}'@'${HOST}';
-create user '${CREATOR}'@'${HOST}' identified by '${CREATOR_PW}';
-grant create on ${DATABASE}.* to '${CREATOR}'@'${HOST}';
-create user '${DROPTOR}'@'${HOST}' identified by '${DROPTOR_PW}';
-grant drop on ${DATABASE}.* to '${DROPTOR}'@'${HOST}';
-create user '${SELECTOR}'@'${HOST}' identified by '${SELECTOR_PW}';
-grant select on ${DATABASE}.* to '${SELECTOR}'@'${HOST}';
-create user '${UPDATOR}'@'${HOST}' identified by '${UPDATOR_PW}';
-grant update on ${DATABASE}.* to '${UPDATOR}'@'${HOST}';
-CREATE USER '${GRANTOR}'@'${HOST}' IDENTIFIED BY '${GRANTOR_PW}';
-GRANT GRANT OPTION ON ${DATABASE}.* TO '${GRANTOR}'@'${HOST}';
+CREATE USER '${INSERTOR}'@'${IP}' IDENTIFIED BY '${INSERTOR_PW}';
+GRANT INSERT ON ${DATABASE}.* TO '${INSERTOR}'@'${IP}';
+CREATE USER '${DELETOR}'@'${IP}' IDENTIFIED BY '${DELETOR_PW}';
+GRANT DELETE ON ${DATABASE}.* TO '${DELETOR}'@'${IP}';
+create user '${CREATOR}'@'${IP}' identified by '${CREATOR_PW}';
+grant create on ${DATABASE}.* to '${CREATOR}'@'${IP}';
+create user '${DROPTOR}'@'${IP}' identified by '${DROPTOR_PW}';
+grant drop on ${DATABASE}.* to '${DROPTOR}'@'${IP}';
+create user '${SELECTOR}'@'${IP}' identified by '${SELECTOR_PW}';
+grant select on ${DATABASE}.* to '${SELECTOR}'@'${IP}';
+create user '${UPDATOR}'@'${IP}' identified by '${UPDATOR_PW}';
+grant update on ${DATABASE}.* to '${UPDATOR}'@'${IP}';
+CREATE USER '${GRANTOR}'@'${IP}' IDENTIFIED BY '${GRANTOR_PW}';
+GRANT GRANT OPTION ON ${DATABASE}.* TO '${GRANTOR}'@'${IP}';
 FLUSH PRIVILEGES;
 EOF
 	#
@@ -46,6 +46,8 @@ fi
 # Delete the file used to create users
 rm /create_user
 #
+# Start telegraf
+telegraf --config /etc/telegraf.conf &
 # Start MYSQL
 exec /usr/bin/mysqld  --console
 #
@@ -67,27 +69,27 @@ exec /usr/bin/mysqld  --console
 #echo "CREATE USER '${ADMIN}'@'%' IDENTIFIED BY '${ADMIN_PW}';" | mysql -u root
 #echo "GRANT ALL PRIVILEGES ON *.* TO '${ADMIN}'@'%';" | mysql -u root
 #	Insertor: This user can insert rows into tables
-#echo "CREATE USER '${INSERTOR}'@'{HOST}' IDENTIFIED BY '${INSERTOR_PW}';" | mysql -u root
-#echo "GRANT INSERT ON ${DATABASE}.* TO '${INSERTOR}'@'${HOST}';" | mysql -u root
+#echo "CREATE USER '${INSERTOR}'@'{IP}' IDENTIFIED BY '${INSERTOR_PW}';" | mysql -u root
+#echo "GRANT INSERT ON ${DATABASE}.* TO '${INSERTOR}'@'${IP}';" | mysql -u root
 #	Deletor: The user can remove rows from tables
-#echo "CREATE USER '${DELETOR}'@'${HOST}' IDENTIFIED BY '${DELETOR_PW}';" | mysql -u root
-#echo "GRANT DELETE ON ${DATABASE}.* TO '${DELETOR}'@'${HOST}';" | mysql -u root
+#echo "CREATE USER '${DELETOR}'@'${IP}' IDENTIFIED BY '${DELETOR_PW}';" | mysql -u root
+#echo "GRANT DELETE ON ${DATABASE}.* TO '${DELETOR}'@'${IP}';" | mysql -u root
 #	Creator: The user can create entirely new tables and databases
-#echo "CREATE USER '${CREATOR}'@'${HOST}' IDENTIFIED BY '${CREATOR_PW}';" | mysql -u root
-#echo "GRANT CREATE ON ${DATABASE}.* TO '${CREATOR}'@'${HOST}';" | mysql -u root
+#echo "CREATE USER '${CREATOR}'@'${IP}' IDENTIFIED BY '${CREATOR_PW}';" | mysql -u root
+#echo "GRANT CREATE ON ${DATABASE}.* TO '${CREATOR}'@'${IP}';" | mysql -u root
 #	Droptor: This user can drop (remove) entire tables and databases
-#echo "CREATE USER '${DROPTOR}'@'${HOST}' IDENTIFIED BY '${DROPTOR_PW}';" | mysql -u root
-#echo "GRANT DROP ON ${DATABASE}.* TO '${DROPTOR}'@'${HOST}';" | mysql -u root
+#echo "CREATE USER '${DROPTOR}'@'${IP}' IDENTIFIED BY '${DROPTOR_PW}';" | mysql -u root
+#echo "GRANT DROP ON ${DATABASE}.* TO '${DROPTOR}'@'${IP}';" | mysql -u root
 #	Selector: This user gets access to the select command, to read 
 #	the information in the databases
-#echo "CREATE USER '${SELECTOR}'@'${HOST}' IDENTIFIED BY '${SELECTOR_PW}';" | mysql -u root
-#echo "GRANT SELECT ON ${DATABASE}.* TO '${SELECTOR}'@'${HOST}';" | mysql -u root
+#echo "CREATE USER '${SELECTOR}'@'${IP}' IDENTIFIED BY '${SELECTOR_PW}';" | mysql -u root
+#echo "GRANT SELECT ON ${DATABASE}.* TO '${SELECTOR}'@'${IP}';" | mysql -u root
 #	Updator: This user can update table rows
-#echo "CREATE USER '${UPDATOR}'@'${HOST}' IDENTIFIED BY '${UPDATOR_pw}';" | mysql -u root
-#echo "GRANT UPDATE ON ${DATABASE}.* TO '${UPDATOR}'@'${HOST}';" | mysql -u root
+#echo "CREATE USER '${UPDATOR}'@'${IP}' IDENTIFIED BY '${UPDATOR_pw}';" | mysql -u root
+#echo "GRANT UPDATE ON ${DATABASE}.* TO '${UPDATOR}'@'${IP}';" | mysql -u root
 #	Grantor: This user can modify other user account privileges
-#echo "CREATE USER '${GRANTOR}'@'${HOST}' IDENTIFIED BY '${GRANTOR_PW}';" | mysql -u root
-#echo "GRANT GRANT OPTION ON ${DATABASE}.* TO '${GRANTOR}'@'${HOST}';" | mysql -u root
+#echo "CREATE USER '${GRANTOR}'@'${IP}' IDENTIFIED BY '${GRANTOR_PW}';" | mysql -u root
+#echo "GRANT GRANT OPTION ON ${DATABASE}.* TO '${GRANTOR}'@'${IP}';" | mysql -u root
 #
 #echo "FLUSH PRIVILEGES;" | mysql -u root
 #

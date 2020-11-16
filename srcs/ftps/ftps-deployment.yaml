@@ -25,17 +25,24 @@ spec:
       - name: certifications
         hostPath:
           path: /certs
-      - name: home
-        hostPath:
-          path: /mnt/ftps/home
+      - name: ftps-persistent-storage
+        persistentVolumeClaim:
+          claimName: ftps-pv-claim
       containers:
       - name: ftps
         image: ftps_image
         ports:
-        - containerPort: 21
+        - name: ftp21
+          containerPort: 21
+        - name: ftp20
+          containerPort: 20
+        - name: ftp30020
+          containerPort: 30020
+        - name: ftp30021
+          containerPort: 30021
         volumeMounts:
         - name: certifications
           mountPath: /certs
-        - name: home
-          mountPath: /home/USER
+        - name: ftps-persistent-storage
+          mountPath: /home/__USER__
         imagePullPolicy: Never

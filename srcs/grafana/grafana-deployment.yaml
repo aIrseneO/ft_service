@@ -25,12 +25,18 @@ spec:
       - name: certifications
         hostPath:
           path: /certs
+      - name: grafana-persistent-storage
+        persistentVolumeClaim:
+          claimName: grafana-pv-claim
       containers:
       - name: grafana
         image: grafana_image
         ports:
-        - containerPort: 3000
+        - name: https
+          containerPort: 3000
         volumeMounts:
         - name: certifications
           mountPath: /certs
+        - name: grafana-persistent-storage
+          mountPath: /var/lib/grafana
         imagePullPolicy: Never
