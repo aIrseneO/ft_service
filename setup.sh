@@ -7,7 +7,7 @@ USER=user42
 PASS=user42
 DATABASE=mydatabase
 #
-#sudo chown "$USER":"$USER" /var/run/docker.sock -R
+echo $PASS | sudo -S chown "$USER":"$USER" /var/run/docker.sock -R
 #
 if [ "$1" = --restart ] || [ "$1" = --clean ]; then
 	kubectl delete deploy,svc,replicaset,pod,pvc,pv --all
