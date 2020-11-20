@@ -22,7 +22,7 @@ RUN sed -i "s/__USER__/$USER/" /etc/telegraf.conf && \
 	sed -i "s/__PASS__/$PASS/" /etc/telegraf.conf && \
 	sed -i "s/__HOST__/$HOST/" /etc/telegraf.conf && \
 	sed -i "s/__DATABASE__/$DATABASE/" /home/setup_database.sh && \
-	chmod +x /home/launch_mysql.sh
+	sed -i "s/__IP__/$IP/g" /mydatabase.sql
 
 EXPOSE 3306
 
