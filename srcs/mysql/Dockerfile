@@ -16,17 +16,16 @@ COPY srcs/my.cnf /etc/mysql/my.cnf
 COPY srcs/telegraf.conf /etc/telegraf.conf
 COPY srcs/launch_mysql.sh /home/launch_mysql.sh
 COPY srcs/mydatabase.sql /mydatabase.sql
-COPY srcs/import_database.sh /import_database.sh
+COPY srcs/setup_database.sh /home/setup_database.sh
 
 RUN sed -i "s/__USER__/$USER/" /etc/telegraf.conf && \
 	sed -i "s/__PASS__/$PASS/" /etc/telegraf.conf && \
 	sed -i "s/__HOST__/$HOST/" /etc/telegraf.conf && \
-	sed -i "s/__DATABASE__/$DATABASE/" /import_database.sh
+	sed -i "s/__DATABASE__/$DATABASE/" /home/setup_database.sh && \
+	chmod +x /home/launch_mysql.sh
 
 EXPOSE 3306
 
 WORKDIR /home
 
-ENTRYPOINT ["/bin/sh"]
-
-CMD ["launch_mysql.sh"]
+CMD /bin/sh launch_mysql.sh

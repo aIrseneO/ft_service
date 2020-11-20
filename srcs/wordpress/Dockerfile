@@ -56,6 +56,4 @@ EXPOSE 5050
 
 WORKDIR /
 
-ENTRYPOINT ["/bin/sh"]
-
-CMD ["launch_wordpress.sh"]
+CMD /bin/sh launch_wordpress.sh

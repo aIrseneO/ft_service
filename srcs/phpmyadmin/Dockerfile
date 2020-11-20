@@ -53,6 +53,4 @@ EXPOSE 5000
 
 WORKDIR /
 
-ENTRYPOINT ["/bin/sh"]
-
-CMD ["launch_phpmyadmin.sh"]
+CMD /bin/sh launch_phpmyadmin.sh

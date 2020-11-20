@@ -7,10 +7,11 @@ USER=user42
 PASS=user42
 DATABASE=mydatabase
 #
-echo $PASS | sudo -S chown -R "$USER":"$USER" /var/run/docker.sock
+#echo $PASS | sudo -S chown -R "$USER":"$USER" /var/run/docker.sock
 #
 if [ "$1" = --restart ] || [ "$1" = --clean ]; then
 	kubectl delete deploy,svc,replicaset,pod,pvc,pv --all
+	docker exec -d minikube sh rm -rf /data/*
 	docker exec -d minikube sh rm -rf /data
 	docker exec -d minikube sh rm -rf /certs
 fi
@@ -22,7 +23,7 @@ fi
 if [ "$1" != --restart ] && [ "$1" != --build ]; then
 	# Starting minikube
 	minikube start --driver=docker \
-		--extra-config=apiserver.service-node-port-range=1-40000
+		--extra-config=apiserver.service-node-port-range=1-40000 > $PWD/log.txt
 	#
 	# Enable minikube dashboard
 	minikube addons enable dashboard
@@ -134,13 +135,9 @@ kubectl create -f srcs/grafana/grafana-deployment.yaml
 sed -e "s|MyClusterIP|$IP|" srcs/grafana/grafana-service.yaml |\
 	kubectl create -f -
 #
-# Import the wordpress database
-#	TODO find how to start mysqld in the background and import the database
-#	aftewards (in the mysql launcher) instead of doing it as the following line. 
-kubectl exec $(kubectl get pod | grep mysql | cut -d " " -f1) -- sh /import_database.sh 
-#
 # Open the network in the browser
 #open https://$IP
 echo	https://$IP
 #
-# TODO: Create secrets for passwords
+# TODO: Create secrets for passwords in kubernetes
+#		increase security: installations, user auth & ssl 

@@ -7,10 +7,10 @@ if [ "$1" = --clean ]; then
 		exit
 fi
 #
-USER=arsene
-PASS=password
+USER=user42
+PASS=user42
 IP=127.0.0.1
-DATABASE=db
+DATABASE=mydatabase
 #
 echo Build images............................................................
 echo	Build my Alpine image with the common installations.....................

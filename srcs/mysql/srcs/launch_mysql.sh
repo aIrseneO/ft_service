@@ -7,38 +7,21 @@ if [ ! -d "/run/mysqld" ]; then
 fi
 #
 if [ ! -d /var/lib/mysql/DB_created ]; then
-# Install MariaDB/MySQL system tables
-mysql_install_db --user=root --defaults-file=/etc/mysql/my.cnf
-#
-# Create the file with the MYSQL's commands to create users
-cat << EOF > /create_user
-USE mysql;
-FLUSH PRIVILEGES;
-CREATE DATABASE ${DATABASE};
-GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '${ROOT_PASSWORD}' WITH GRANT OPTION;
-CREATE USER '${ADMIN}'@'%' IDENTIFIED BY '${ADMIN_PW}';
-GRANT ALL PRIVILEGES ON ${DATABASE}.* TO '${ADMIN}'@'%' WITH GRANT OPTION;
-FLUSH PRIVILEGES;
-EOF
-	#
-	# Create users
-	/usr/bin/mysqld --user=root --bootstrap --verbose=0 < /create_user
-	# TODO import the database
-	#/usr/bin/mysqld --database=mydatabase --bootstrap --verbose=0 < /mydatabase.sql
+	# Setup the database when mysql is up (nohup comes handy)
+	nohup sh setup_database.sh > /dev/null 2>&1 &
 	mkdir -p /var/lib/mysql/DB_created
-else
-	# Install MariaDB/MySQL system tables
-	mysql_install_db --defaults-file=/etc/mysql/my.cnf
 fi
-#
-# Delete the file used to create users
-rm /create_user
+# Configure MariaDB
+sed -i 's/skip-networking/#skip-networking/g' /etc/my.cnf.d/mariadb-server.cnf
 #
 # Start telegraf
 telegraf --config /etc/telegraf.conf &
+#
+# Install MariaDB/MySQL system tables
+mysql_install_db --user=root --defaults-file=/etc/mysql/my.cnf
+#
 # Start MYSQL
-# TODO Find how to run it in the background so that another command can be run after
-exec /usr/bin/mysqld  --console
+/usr/bin/mysqld_safe --datadir='/var/lib/mysql'
 #
 ############################################################### or -2-
 #

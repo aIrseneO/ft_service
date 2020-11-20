@@ -22,6 +22,4 @@ EXPOSE 8086
 
 WORKDIR /
 
-ENTRYPOINT ["/bin/sh"]
-
-CMD ["launch_influxdb.sh"]
+CMD /bin/sh launch_influxdb.sh

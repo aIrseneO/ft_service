@@ -24,6 +24,4 @@ EXPOSE 3000
 
 WORKDIR /
 
-ENTRYPOINT ["/bin/sh"]
-
-CMD ["/launch_grafana.sh"]
+CMD /bin/sh /launch_grafana.sh

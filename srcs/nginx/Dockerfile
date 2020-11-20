@@ -31,6 +31,4 @@ EXPOSE 22
 
 EXPOSE 443
 
-ENTRYPOINT ["/bin/sh"]
-
-CMD ["launch_nginx.sh"]
+CMD /bin/sh launch_nginx.sh
