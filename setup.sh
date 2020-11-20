@@ -10,6 +10,7 @@ DATABASE=mydatabase
 #echo $PASS | sudo -S chown -R "$USER":"$USER" /var/run/docker.sock
 #
 if [ "$1" = --restart ] || [ "$1" = --clean ]; then
+	echo	Cleaning............................................................
 	kubectl delete deploy,svc,replicaset,pod,pvc,pv --all
 	docker exec -d minikube sh rm -rf /data/*
 	docker exec -d minikube sh rm -rf /data
@@ -21,14 +22,14 @@ if [ "$1" = --clean ]; then
 fi
 #
 if [ "$1" != --restart ] && [ "$1" != --build ]; then
-	# Starting minikube
+	echo	Starting minikube...................................................
 	minikube start --driver=docker \
 		--extra-config=apiserver.service-node-port-range=1-40000 > $PWD/log.txt
 	#
 	# Enable minikube dashboard
-	minikube addons enable dashboard
-	minikube addons enable metrics-server
-	minikube dashboard &
+	minikube addons enable dashboard > $PWD/log.txt
+	minikube addons enable metrics-server > $PWD/log.txt
+	minikube dashboard > $PWD/log.txt &
 fi
 #
 echo	Get the IP address of the running container minikube....................
