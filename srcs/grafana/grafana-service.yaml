@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-service
+  labels:
+    app: ft_service
+    tier: front-end
+    name: grafana-service
+  annotations:
+    metallb.universe.tf/allow-shared-ip: MySharingKey
+spec:
+  type: LoadBalancer
+  loadBalancerIP: MyClusterIP
+  ports:
+  - name: https
+    protocol: TCP
+    targetPort: 3000
+    port: 3000
+    nodePort:
+  selector:
+    app: ft_service
+    tier: front-end
+    name: grafana-pod

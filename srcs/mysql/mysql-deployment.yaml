@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+  labels:
+    app: ft_service
+    tier: back-end
+    name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ft_service
+      tier: back-end
+      name: mysql
+  template:
+    metadata:
+      name: mysql-pod
+      labels:
+        app: ft_service
+        tier: back-end
+        name: mysql
+    spec:
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+      containers:
+      - name: mysql
+        image: mysql_image
+        ports:
+        - name: mysql
+          containerPort: 3306
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+        imagePullPolicy: Never

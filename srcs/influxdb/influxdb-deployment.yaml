@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb-deployment
+  labels:
+    app: ft_service
+    tier: back-end
+    name: influxdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ft_service
+      tier: back-end
+      name: influxdb
+  template:
+    metadata:
+      name: influxdb-pod
+      labels:
+        app: ft_service
+        tier: back-end
+        name: influxdb
+    spec:
+      volumes:
+      - name: influxdb-persistent-storage
+        persistentVolumeClaim:
+          claimName: influxdb-pv-claim
+      containers:
+      - name: influxdb
+        image: influxdb_image
+        ports:
+        - containerPort: 8086
+        volumeMounts:
+        - name: influxdb-persistent-storage
+          mountPath: /var/lib/influxdb
+        imagePullPolicy: Never
