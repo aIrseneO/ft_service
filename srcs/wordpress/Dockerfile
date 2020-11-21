@@ -4,9 +4,9 @@ ARG USER
 ARG PASS
 ARG HOST1
 ARG HOST2
+ARG IP
 ARG DATABASE
 ARG USR=www
-ARG HOSTNAME
 
 ENV PHP_FPM_USER="$USR" PHP_FPM_GROUP="$USR" \
 	PHP_FPM_LISTEN_MODE="0660" PHP_MEMORY_LIMIT="512M" \
@@ -34,7 +34,8 @@ RUN wget http://wordpress.org/latest.tar.gz -O /$USR/wp.tar.gz \
 	&& chown -R $USR:$USR /$USR/wordpress && chmod 700 /$USR/wordpress/wp-config.php \
 	&& sed -i "s/__USER__/$USER/" /etc/telegraf.conf \
 	&& sed -i "s/__PASS__/$PASS/" /etc/telegraf.conf \
-	&& sed -i "s/__HOST__/$HOST2/" /etc/telegraf.conf
+	&& sed -i "s/__HOST__/$HOST2/" /etc/telegraf.conf \
+	&& sed -i "s/__IP__/$IP/" /etc/nginx/conf.d/localhost.conf
 
 
 RUN sed -i "s|;listen.owner\s*=\s*nobody|listen.owner = ${PHP_FPM_USER}|g" /etc/php7/php-fpm.d/$USR.conf && \

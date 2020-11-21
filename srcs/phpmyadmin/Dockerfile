@@ -4,6 +4,7 @@ ARG USER
 ARG PASS
 ARG HOST1
 ARG HOST2
+ARG IP
 ARG USR=www
 
 ENV PHP_FPM_USER="$USR" PHP_FPM_GROUP="$USR" \
@@ -23,7 +24,8 @@ RUN adduser -D -g '$USR' -h /home/$USR/ $USR && mkdir /$USR && \
 	mkdir -p /run/nginx && mkdir -p /run/php && \
 	sed -i "s/__USER__/$USER/" /etc/telegraf.conf && \
 	sed -i "s/__PASS__/$PASS/" /etc/telegraf.conf && \
-	sed -i "s/__HOST__/$HOST2/" /etc/telegraf.conf
+	sed -i "s/__HOST__/$HOST2/" /etc/telegraf.conf && \
+	sed -i "s/__IP__/$IP/" /etc/nginx/conf.d/localhost.conf
 
 RUN wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-english.tar.gz \
 	&& tar xfz phpMyAdmin-latest-english.tar.gz -C /$USR && \

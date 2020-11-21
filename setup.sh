@@ -12,9 +12,9 @@ DATABASE=mydatabase
 if [ "$1" = --restart ] || [ "$1" = --clean ]; then
 	echo	Cleaning............................................................
 	kubectl delete deploy,svc,replicaset,pod,pvc,pv --all
-	docker exec -d minikube sh rm -rf /data/*
-	docker exec -d minikube sh rm -rf /data
-	docker exec -d minikube sh rm -rf /certs
+	docker exec -d minikube rm -rf /data/*
+	docker exec -d minikube rm -rf /data
+	docker exec -d minikube rm -rf /certs
 fi
 #
 if [ "$1" = --clean ]; then
@@ -67,12 +67,13 @@ docker build -t nginx_image --build-arg USER=$USER --build-arg PASS=$PASS \
 echo    Build Wordpress image...................................................
 docker build -t wordpress_image --build-arg USER=$USER --build-arg PASS=$PASS \
 		--build-arg HOST1=mysql --build-arg HOST2=influxdb-service \
-		--build-arg DATABASE=$DATABASE -f srcs/wordpress/Dockerfile \
-		srcs/wordpress >> $PWD/log.txt
+		--build-arg DATABASE=$DATABASE --build-arg IP=$IP \
+		-f srcs/wordpress/Dockerfile srcs/wordpress >> $PWD/log.txt
 echo    Build PhpMyAdmin image..................................................
 docker build -t phpmyadmin_image --build-arg USER=$USER --build-arg PASS=$PASS \
-		--build-arg HOST1=mysql --build-arg HOST2=influxdb-service \
-		-f srcs/phpmyadmin/Dockerfile srcs/phpmyadmin >> $PWD/log.txt
+		--build-arg HOST1=mysql --build-arg HOST2=influxdb-service  \
+		--build-arg IP=$IP -f srcs/phpmyadmin/Dockerfile \
+		srcs/phpmyadmin >> $PWD/log.txt
 echo    Build Grafana image.....................................................
 docker build -t grafana_image --build-arg USER=$USER --build-arg PASS=$PASS \
 		--build-arg HOST=influxdb-service -f srcs/grafana/Dockerfile \
