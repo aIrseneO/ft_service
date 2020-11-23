@@ -16,18 +16,18 @@ spec:
     protocol: TCP  
     targetPort: 21
     port: 21
-  - name: ftp20
+  - name: ftp21101
     protocol: TCP  
-    targetPort: 20
-    port: 20
-  - name: ftp30020
+    targetPort: 21101
+    port: 21101
+  - name: ftp21102
     protocol: TCP  
-    targetPort: 30020
-    port: 30020
-  - name: ftp30021
+    targetPort: 21102
+    port: 21102
+  - name: ftp21103
     protocol: TCP  
-    targetPort: 30021
-    port: 30021
+    targetPort: 21103
+    port: 21103
   selector:
     app: ft_service
     tier: front-end

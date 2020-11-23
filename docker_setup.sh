@@ -26,7 +26,7 @@ docker build -t mysql_image --build-arg USER=$USER --build-arg PASS=$PASS \
 		srcs/mysql >> $PWD/log.txt
 echo	Build Ftps image........................................................
 docker build -t ftps_image --build-arg USER=$USER --build-arg PASS=$PASS \
-		--build-arg HOST=localhost -f srcs/ftps/Dockerfile \
+		--build-arg IP=$IP --build-arg HOST=localhost -f srcs/ftps/Dockerfile \
 		srcs/ftps >> $PWD/log.txt
 echo	Build Nginx image.......................................................
 docker build -t nginx_image --build-arg USER=$USER --build-arg PASS=$PASS \
@@ -34,12 +34,12 @@ docker build -t nginx_image --build-arg USER=$USER --build-arg PASS=$PASS \
 		srcs/nginx >> $PWD/log.txt
 echo	Build Wordpress image...................................................
 docker build -t wordpress_image --build-arg USER=$USER --build-arg PASS=$PASS \
-		--build-arg HOST1=mysql --build-arg HOST2=localhost \
+		--build-arg HOST1=mysql --build-arg HOST2=localhost --build-arg IP=$IP \
 		--build-arg DATABASE=$DATABASE -f srcs/wordpress/Dockerfile \
 		srcs/wordpress >> $PWD/log.txt
 echo	Build PhpMyAdmin image..................................................
 docker build -t phpmyadmin_image --build-arg USER=$USER --build-arg PASS=$PASS \
-		--build-arg HOST1=mysql --build-arg HOST2=localhost \
+		--build-arg HOST1=mysql --build-arg HOST2=localhost --build-arg IP=$IP \
 		-f srcs/phpmyadmin/Dockerfile srcs/phpmyadmin >> $PWD/log.txt
 echo	Build Grafana image.....................................................
 docker build -t grafana_image --build-arg USER=$USER --build-arg PASS=$PASS \

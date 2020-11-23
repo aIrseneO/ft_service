@@ -34,12 +34,12 @@ spec:
         ports:
         - name: ftp21
           containerPort: 21
-        - name: ftp20
-          containerPort: 20
-        - name: ftp30020
-          containerPort: 30020
-        - name: ftp30021
-          containerPort: 30021
+        - name: ftp21101
+          containerPort: 21101
+        - name: ftp21102
+          containerPort: 21102
+        - name: ftp21103
+          containerPort: 21103
         volumeMounts:
         - name: certifications
           mountPath: /certs
