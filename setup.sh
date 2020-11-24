@@ -141,5 +141,6 @@ sed -e "s|MyClusterIP|$IP|" srcs/grafana/grafana-service.yaml |\
 #open https://$IP
 echo	https://$IP
 #
-# TODO: Create secrets for passwords in kubernetes
-#		increase security: installations, user auth & ssl 
+# TODO: Create namespace and sacrets passwords in kubernetes
+#		increase security: installations, user auth, files permittions, ssl connection...
+#		specify hardware usage

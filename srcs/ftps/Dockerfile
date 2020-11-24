@@ -13,6 +13,7 @@ COPY srcs/launch_ftps.sh /launch_ftps.sh
 COPY srcs/telegraf.conf /etc/telegraf.conf
 
 RUN echo -e "$PASS\n$PASS" | adduser --shell /sbin/nologin $USER && \
+	chown -R $USER:$USER /home/$USER && \
 	sed -i "s/__USER__/$USER/" /etc/telegraf.conf && \
 	sed -i "s/__PASS__/$PASS/" /etc/telegraf.conf && \
     sed -i "s/__HOST__/$HOST/" /etc/telegraf.conf && \
