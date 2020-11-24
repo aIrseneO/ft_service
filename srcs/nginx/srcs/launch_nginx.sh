@@ -1,17 +1,9 @@
 #! /bin/sh/
 #
-# Set the global directive for the process identifier (PID)
-#mkdir -p /run/nginx
-#mkdir -p /run/php
-#
-# Set Pid for nginx
-nginx -g "pid /run/nginx/nginx.pid;"
-#
 # Start Telegraf, Php, Ssh and Nginx
 telegraf --config /etc/telegraf.conf &
-php-fpm7 --pid /run/php/php.pid &
 /usr/sbin/sshd &
-nginx -s reload
+nginx -g "pid /run/nginx/nginx.pid;"
 #
 # Check if nginx and php are up running
 #ps aux | grep nginx
