@@ -13,7 +13,7 @@ COPY srcs/telegraf.conf /etc/telegraf/telegraf.conf
 COPY srcs/supervisord.conf /etc/supervisord.conf
 
 RUN echo -e "$PASS\n$PASS" | adduser --shell /sbin/nologin $USER && \
-	chown -R $USER:$USER /home/$USER && \
+	echo -e "root\nroot" | passwd root && \
 	sed -i "s/__USER__/$USER/" /etc/telegraf/telegraf.conf && \
 	sed -i "s/__PASS__/$PASS/" /etc/telegraf/telegraf.conf && \
     sed -i "s/__HOST__/$HOST/" /etc/telegraf/telegraf.conf && \

@@ -44,5 +44,5 @@ spec:
         - name: certifications
           mountPath: /certs
         - name: ftps-persistent-storage
-          mountPath: /home/__USER__
+          mountPath: /root              #/home/__USER__
         imagePullPolicy: Never

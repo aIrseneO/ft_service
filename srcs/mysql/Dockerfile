@@ -19,9 +19,9 @@ COPY srcs/mydatabase.sql /mydatabase.sql
 COPY srcs/setup_database.sh /home/setup_database.sh
 COPY srcs/supervisord.conf /etc/supervisord.conf
 
-RUN sed -i "s/__USER__/$USER/" /etc/telegraf.conf && \
-	sed -i "s/__PASS__/$PASS/" /etc/telegraf.conf && \
-	sed -i "s/__HOST__/$HOST/" /etc/telegraf.conf && \
+RUN sed -i "s/__USER__/$USER/" /etc/telegraf/telegraf.conf && \
+	sed -i "s/__PASS__/$PASS/" /etc/telegraf/telegraf.conf && \
+	sed -i "s/__HOST__/$HOST/" /etc/telegraf/telegraf.conf && \
 	sed -i "s/__DATABASE__/$DATABASE/" /home/setup_database.sh && \
 	sed -i "s/__IP__/$IP/g" /mydatabase.sql && \
 	sed -i 's/skip-networking/#skip-networking/g' /etc/my.cnf.d/mariadb-server.cnf
