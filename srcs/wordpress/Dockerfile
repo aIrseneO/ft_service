@@ -18,7 +18,8 @@ ENV PHP_FPM_USER="$USR" PHP_FPM_GROUP="$USR" \
 COPY srcs/nginx.conf /etc/nginx/nginx.conf
 COPY srcs/localhost.conf /etc/nginx/conf.d/localhost.conf
 COPY srcs/launch_wordpress.sh /launch_wordpress.sh
-COPY srcs/telegraf.conf /etc/telegraf.conf
+COPY srcs/telegraf.conf /etc/telegraf/telegraf.conf
+COPY srcs/supervisord.conf /etc/supervisord.conf
 
 RUN adduser -D -g '$USR' -h /home/$USR/ $USR && mkdir /$USR && \
 	chown -R $USR:$USR /$USR && chown -R $USR:$USR /var/lib/nginx && \
@@ -32,9 +33,9 @@ RUN wget http://wordpress.org/latest.tar.gz -O /$USR/wp.tar.gz \
 	&& sed -i "s/password_here/$PASS/" /$USR/wordpress/wp-config.php \
 	&& sed -i "s/localhost/$HOST1/" /$USR/wordpress/wp-config.php \
 	&& chown -R $USR:$USR /$USR/wordpress && chmod 700 /$USR/wordpress/wp-config.php \
-	&& sed -i "s/__USER__/$USER/" /etc/telegraf.conf \
-	&& sed -i "s/__PASS__/$PASS/" /etc/telegraf.conf \
-	&& sed -i "s/__HOST__/$HOST2/" /etc/telegraf.conf \
+	&& sed -i "s/__USER__/$USER/" /etc/telegraf/telegraf.conf \
+	&& sed -i "s/__PASS__/$PASS/" /etc/telegraf/telegraf.conf \
+	&& sed -i "s/__HOST__/$HOST2/" /etc/telegraf/telegraf.conf \
 	&& sed -i "s/__IP__/$IP/" /etc/nginx/conf.d/localhost.conf
 
 

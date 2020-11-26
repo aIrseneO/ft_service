@@ -144,3 +144,4 @@ echo	https://$IP
 # TODO: Create namespace and sacrets passwords in kubernetes
 #		increase security: installations, user auth, files permittions, ssl connection...
 #		specify hardware usage
+#		specify version of alpine and all apps used so that it can still work overtime
