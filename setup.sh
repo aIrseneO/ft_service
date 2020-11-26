@@ -3,6 +3,9 @@
 ##sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
 ##sudo chmod g+rwx "/home/$USER/.docker" -R
 #
+#sudo apt-get update
+#sudo apt-get install filezilla
+#
 USER=user42
 PASS=user42
 DATABASE=mydatabase
